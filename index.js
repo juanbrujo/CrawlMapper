@@ -26,6 +26,14 @@ async function fetchSitemap(sitemapUrl) {
     console.log(`Found ${urls.length} URLs in sitemap`);
     return urls;
   } catch (error) {
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 404) {
+        throw new Error('Sitemap not found: The sitemap.xml file does not exist at the provided URL');
+      } else if (status === 406 || status === 403 || status >= 400) {
+        throw new Error(`Sitemap not found: Server returned ${status} status code`);
+      }
+    }
     throw new Error(`Error fetching sitemap: ${error.message}`);
   }
 }
@@ -140,6 +148,38 @@ function getMatchingUrls(results) {
   return results.filter(result => result.found).map(result => result.url);
 }
 
+/**
+ * Normalizes a URL to a proper sitemap URL format
+ * @param {string} inputUrl - The input URL in various formats
+ * @returns {string} - The complete sitemap URL
+ */
+function normalizeSitemapUrl(inputUrl) {
+  // Remove protocol and www if present
+  let cleanUrl = inputUrl.trim();
+  
+  // Remove trailing slashes
+  cleanUrl = cleanUrl.replace(/\/+$/, '');
+  
+  // Remove protocol if present
+  cleanUrl = cleanUrl.replace(/^https?:\/\//, '');
+  
+  // Remove www if present
+  cleanUrl = cleanUrl.replace(/^www\./, '');
+  
+  // Add https protocol and www if not present
+  if (!cleanUrl.startsWith('www.')) {
+    cleanUrl = 'www.' + cleanUrl;
+  }
+  
+  // Add https protocol
+  cleanUrl = 'https://' + cleanUrl;
+  
+  // Append /sitemap.xml
+  cleanUrl += '/sitemap.xml';
+  
+  return cleanUrl;
+}
+
 // Parse command line arguments
 function parseArguments() {
   const args = process.argv.slice(2);
@@ -148,7 +188,7 @@ function parseArguments() {
   
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--url' && i + 1 < args.length) {
-      sitemapUrl = args[i + 1];
+      sitemapUrl = normalizeSitemapUrl(args[i + 1]);
       i++; // Skip next argument as it's the URL value
     } else if (args[i] === '--query' && i + 1 < args.length) {
       query = args[i + 1];
@@ -183,6 +223,10 @@ async function main() {
     
   } catch (error) {
     console.error('Failed to crawl sitemap:', error.message);
+    if (error.message.includes('not found')) {
+      console.log('\nThe sitemap.xml file could not be found at the provided URL.');
+      console.log('Please check that the website exists and has a sitemap.xml file.');
+    }
   }
 }
 
@@ -195,5 +239,6 @@ export {
   fetchSitemap,
   scrapeUrl,
   searchInContent,
-  getMatchingUrls
+  getMatchingUrls,
+  normalizeSitemapUrl
 };

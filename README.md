@@ -46,18 +46,30 @@ node index.js
 You can customize the URL and search query using command line arguments:
 
 ```bash
-# Search for "fillout" in a specific sitemap
-node index.js --url "https://example.com/sitemap.xml"
+# Search for "fillout" in a specific sitemap (simple domain format)
+node index.js --url "example.com"
+
+# Search for "fillout" with full URL
+node index.js --url "https://www.example.com"
 
 # Search for a different term in the default URL
 node index.js --query "search-term"
 
 # Custom URL and search term
-node index.js --url "https://example.com/sitemap.xml" --query "custom-term"
+node index.js --url "example.com" --query "custom-term"
 ```
 
+**URL Handling:**
+The `--url` parameter accepts various formats and automatically normalizes them:
+- `example.com` → `https://www.example.com/sitemap.xml`
+- `https://www.example.com` → `https://www.example.com/sitemap.xml`
+- `https://www.example.com/` → `https://www.example.com/sitemap.xml`
+- `www.example.com` → `https://www.example.com/sitemap.xml`
+
+The tool automatically appends `/sitemap.xml` to complete the sitemap URL and handles cases where the sitemap is not found.
+
 **Parameters:**
-- `--url`: The sitemap URL to crawl (default: https://www.surirefugios.com/)
+- `--url`: The domain or full URL to crawl (default: https://www.surirefugios.com/)
 - `--query`: The search term to look for in page content (default: fillout)
 
 ### Programmatic Usage
@@ -86,14 +98,17 @@ Here are some common usage examples:
 # Use defaults (URL: https://www.surirefugios.com/, Query: fillout)
 node index.js
 
-# Search for "contact" in a different sitemap
-node index.js --url "https://example.com/sitemap.xml" --query "contact"
+# Search for "contact" using simple domain format
+node index.js --url "example.com" --query "contact"
 
-# Search for "pricing" in the default URL
-node index.js --query "pricing"
+# Search for "pricing" using full URL format
+node index.js --url "https://www.example.com" --query "pricing"
 
-# Search for "login" in a custom sitemap
-node index.js --url "https://mysite.com/sitemap.xml" --query "login"
+# Search for "login" using domain with www
+node index.js --url "www.example.com" --query "login"
+
+# Search for "contact" in the default URL
+node index.js --query "contact"
 ```
 
 ## Configuration
@@ -158,6 +173,7 @@ Pages without "fillout": 40
 
 The tool handles various error scenarios:
 
+- **Sitemap not found**: When the sitemap.xml file doesn't exist (404, 403, 406 errors)
 - **Network timeouts**: Pages that don't respond within 10 seconds are skipped
 - **Invalid URLs**: Malformed URLs are caught and reported
 - **XML parsing errors**: Invalid sitemap XML is handled gracefully
