@@ -183,8 +183,8 @@ function normalizeSitemapUrl(inputUrl) {
 // Parse command line arguments
 function parseArguments() {
   const args = process.argv.slice(2);
-  let sitemapUrl = 'https://www.surirefugios.com/'; // Default URL
-  let query = 'fillout'; // Default query
+  let sitemapUrl = null;
+  let query = null;
   
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--url' && i + 1 < args.length) {
@@ -194,6 +194,18 @@ function parseArguments() {
       query = args[i + 1];
       i++; // Skip next argument as it's the query value
     }
+  }
+  
+  // Validate that both parameters are provided
+  if (!sitemapUrl || !query) {
+    console.error('Error: Both --url and --query parameters are required.\n');
+    console.log('Usage:');
+    console.log('  node index.js --url <domain> --query <search-term>\n');
+    console.log('Examples:');
+    console.log('  node index.js --url "example.com" --query "contact"');
+    console.log('  node index.js --url "google.com" --query "privacy"');
+    console.log('  node index.js --url "stackoverflow.com" --query "javascript"');
+    process.exit(1);
   }
   
   return { sitemapUrl, query };

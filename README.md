@@ -35,42 +35,39 @@ A Node.js application that crawls sitemaps and searches for specific terms in we
 ## Quick Start
 
 ```bash
-# Use default settings (searches for "fillout" in surirefugios.com)
-node index.js
-
 # Search for any term in any website using simple domain format
-node index.js --url "example.com" --query "your-search-term"
+node index.js --url "example.com" --query "contact"
 
 # Search using full URL format
-node index.js --url "https://www.example.com" --query "contact"
+node index.js --url "https://www.google.com" --query "privacy"
+
+# Search with different domain formats
+node index.js --url "stackoverflow.com" --query "javascript"
 ```
 
 ## Usage
 
 ### Basic Usage
 
-Run the main script with default parameters (URL: https://www.surirefugios.com/, Query: "fillout"):
+CrawlMapper requires both URL and query parameters to be specified:
 
 ```bash
-node index.js
+node index.js --url "example.com" --query "search-term"
 ```
 
 ### Command Line Options
 
-You can customize the URL and search query using command line arguments:
+You must provide both URL and search query parameters:
 
 ```bash
-# Search for "fillout" in a specific sitemap (simple domain format)
-node index.js --url "example.com"
+# Search for "contact" using simple domain format
+node index.js --url "example.com" --query "contact"
 
-# Search for "fillout" with full URL
-node index.js --url "https://www.example.com"
+# Search using full URL format
+node index.js --url "https://www.example.com" --query "privacy"
 
-# Search for a different term in the default URL
-node index.js --query "search-term"
-
-# Custom URL and search term
-node index.js --url "example.com" --query "custom-term"
+# Search for "javascript" related content
+node index.js --url "stackoverflow.com" --query "javascript"
 ```
 
 **URL Handling:**
@@ -83,8 +80,8 @@ The `--url` parameter accepts various formats and automatically normalizes them:
 The tool automatically appends `/sitemap.xml` to complete the sitemap URL and handles cases where the sitemap is not found.
 
 **Parameters:**
-- `--url`: The domain or full URL to crawl (default: https://www.surirefugios.com/)
-- `--query`: The search term to look for in page content (default: fillout)
+- `--url`: The domain or full URL to crawl (required)
+- `--query`: The search term to look for in page content (required)
 
 ### Programmatic Usage
 
@@ -93,8 +90,8 @@ import { crawlSitemapAndSearch } from './index.js';
 
 // Search for a term in a sitemap
 const results = await crawlSitemapAndSearch(
-  'https://www.surirefugios.com/sitemap.xml',
-  'fillout'
+  'https://www.example.com/sitemap.xml',
+  'contact'
 );
 
 // Get only the URLs that contain the search term
@@ -109,20 +106,20 @@ console.log('Found URLs:', matchingUrls);
 Here are some common usage examples:
 
 ```bash
-# Use defaults (URL: https://www.surirefugios.com/, Query: fillout)
-node index.js
-
-# Search for "contact" using simple domain format
+# Search for "contact" information
 node index.js --url "example.com" --query "contact"
 
-# Search for "pricing" using full URL format
-node index.js --url "https://www.example.com" --query "pricing"
+# Search for "privacy" policy
+node index.js --url "https://www.google.com" --query "privacy"
 
-# Search for "login" using domain with www
-node index.js --url "www.example.com" --query "login"
+# Search for "javascript" related content
+node index.js --url "stackoverflow.com" --query "javascript"
 
-# Search for "contact" in the default URL
-node index.js --query "contact"
+# Search for "pricing" information
+node index.js --url "www.example.com" --query "pricing"
+
+# Search for "about" page
+node index.js --url "github.com" --query "about"
 ```
 
 ## Configuration
@@ -184,11 +181,24 @@ Pages without "privacy": 40
 2. https://www.google.com/privacy
 ```
 
+### Missing Parameters Error
+```
+Error: Both --url and --query parameters are required.
+
+Usage:
+  node index.js --url <domain> --query <search-term>
+
+Examples:
+  node index.js --url "example.com" --query "contact"
+  node index.js --url "google.com" --query "privacy"
+  node index.js --url "stackoverflow.com" --query "javascript"
+```
+
 ### Sitemap Not Found
 ```
 === CrawlMapper ===
 Target: https://www.example.com/sitemap.xml
-Search term: "fillout"
+Search term: "contact"
 ===================
 
 Fetching sitemap from: https://www.example.com/sitemap.xml
