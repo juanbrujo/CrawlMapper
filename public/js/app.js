@@ -256,10 +256,8 @@ class CrawlMapperApp {
   showResults(data) {
     this.currentSearchData = data;
 
-    // Extract and store base URL for resolving relative URLs in links
-    if (data.sitemapUrl) {
-      this.currentBaseUrl = data.sitemapUrl.replace(/\/sitemap\.xml.*$/, '');
-    }
+    // Use the original search URL as base for resolving relative URLs
+    this.currentBaseUrl = this.urlInput.value.trim();
 
     let summary = `Found ${data.foundPages} pages containing "${data.query}"`;
 
@@ -393,7 +391,7 @@ class CrawlMapperApp {
 
     const metadata = [
       '# CrawlMapper Export',
-      '# Tool: CrawlMapper v2.3.2',
+      '# Tool: CrawlMapper v2.3.6',
       `# Generated: ${new Date().toISOString()}`,
       `# Sitemap: ${sitemapUrl}`,
       `# Query: "${query}"`,
