@@ -232,12 +232,12 @@ class CrawlMapperApp {
 
     const sizedMessages = sitemapSize
       ? [
-          `Crawling sitemap... (${sitemapSize} pages found)`,
-          'Searching for "' + this.searchTerm.textContent + '"...',
-          `Processing ${sitemapSize} pages...`,
-          'Analyzing content...',
-          'Almost done...',
-        ]
+        `Crawling sitemap... (${sitemapSize} pages found)`,
+        'Searching for "' + this.searchTerm.textContent + '"...',
+        `Processing ${sitemapSize} pages...`,
+        'Analyzing content...',
+        'Almost done...',
+      ]
       : baseMessages;
 
     let index = 0;
