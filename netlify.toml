@@ -5,8 +5,8 @@
   # Directory where functions are located
   functions = "netlify/functions"
   
-  # Build command (if needed)
-  command = "echo 'No build step required'"
+  # Install dependencies for functions
+  command = "cd netlify/functions && npm install && echo 'Functions dependencies installed'"
 
 [build.environment]
   # Node.js version
