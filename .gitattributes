@@ -1,0 +1,58 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.c text
+*.cpp text
+*.cxx text
+*.cc text
+*.c++ text
+*.java text
+*.h text
+*.hpp text
+*.h++ text
+*.hh text
+*.cs text
+*.rb text
+*.obj text
+*.cppml text
+*.csml text
+
+# Denote all files that should not have line ending changes
+*.jar binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.pdf binary
+*.zip binary
+
+# JS/TS files
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.mjs text eol=lf
+
+# JSON files
+*.json text eol=lf
+
+# YAML files
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# Markdown files
+*.md text eol=lf
+
+# Configuration files
+*.conf text eol=lf
+*.config text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+
+# Lock files
+package-lock.json binary
+yarn.lock binary
