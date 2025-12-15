@@ -3,18 +3,18 @@ const xml2js = require('xml2js');
 
 const SITEMAP_TIMEOUT = 15000;
 const URL_TIMEOUT = 8000;
-const MAX_URLS_TO_PROCESS = 30;
-const BATCH_DELAY = 200;
+const MAX_URLS_TO_PROCESS = 1000;
+const BATCH_DELAY = 100;
 const FUNCTION_TIMEOUT = 25000;
-const MIN_BATCHES = 3;
-const MAX_BATCHES = 6;
+const MIN_BATCHES = 0;
+const MAX_BATCHES = 1000;
 
 async function fetchSitemap(sitemapUrl) {
   try {
     const response = await axios.get(sitemapUrl, {
       timeout: SITEMAP_TIMEOUT,
       headers: {
-        'User-Agent': 'CrawlMapper/2.3.0 (Sitemap Analyzer)',
+        'User-Agent': 'CrawlMapper/2.3.1 (Sitemap Analyzer)',
         Accept: 'application/xml, text/xml, */*;q=0.8',
       },
       maxContentLength: 5 * 1024 * 1024,
@@ -38,7 +38,7 @@ async function scrapeUrl(url) {
     const response = await axios.get(url, {
       timeout: URL_TIMEOUT,
       headers: {
-        'User-Agent': 'CrawlMapper/2.3.0 (Content Analyzer)',
+        'User-Agent': 'CrawlMapper/2.3.1 (Content Analyzer)',
       },
       maxContentLength: 2 * 1024 * 1024,
       maxBodyLength: 2 * 1024 * 1024,
@@ -173,8 +173,10 @@ exports.handler = async (event, context) => {
 
     if (urls.length > MAX_URLS_TO_PROCESS) {
       console.log(
-        `Processing ${urlsToProcess.length} of ${urls.length} total URLs (limited for performance)`
+        `Processing ${urlsToProcess.length} of ${urls.length} total URLs (limit: ${MAX_URLS_TO_PROCESS})`
       );
+    } else {
+      console.log(`Processing all ${urls.length} URLs from sitemap`);
     }
 
     const results = [];
@@ -182,12 +184,12 @@ exports.handler = async (event, context) => {
     let found = 0;
     let batchesProcessed = 0;
 
-    const batchSize = 5;
+    const batchSize = 10;
     for (let i = 0; i < urlsToProcess.length; i += batchSize) {
       const elapsedTime = Date.now() - startTime;
       const remainingTime = FUNCTION_TIMEOUT - elapsedTime;
 
-      if (remainingTime <= 5000) {
+      if (remainingTime <= 3000) {
         console.log(
           `Time limit approaching (${remainingTime}ms remaining), stopping early`
         );
@@ -222,13 +224,7 @@ exports.handler = async (event, context) => {
       found += batchResults.filter((r) => r.found).length;
       batchesProcessed++;
 
-      const hasFoundResults = found > 0;
-      const reachedMinBatches = batchesProcessed >= MIN_BATCHES;
       const reachedMaxBatches = batchesProcessed >= MAX_BATCHES;
-
-      if (hasFoundResults && reachedMinBatches) {
-        break;
-      }
 
       if (reachedMaxBatches) {
         console.log(`Reached maximum batches (${MAX_BATCHES}), stopping`);
