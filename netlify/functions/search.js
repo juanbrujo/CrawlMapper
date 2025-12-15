@@ -33,9 +33,10 @@ async function fetchSitemap(sitemapUrl) {
   }
 }
 
-async function scrapeUrl(url) {
+async function scrapeUrl(url, baseUrl = null) {
   try {
-    const response = await axios.get(url, {
+    const resolvedUrl = resolveRelativeUrl(url, baseUrl);
+    const response = await axios.get(resolvedUrl, {
       timeout: URL_TIMEOUT,
       headers: {
         'User-Agent': 'CrawlMapper/2.3.1 (Content Analyzer)',
@@ -63,6 +64,31 @@ function searchInContent(htmlContent, query) {
   const searchTerm = query.toLowerCase();
 
   return content.includes(searchTerm);
+}
+
+function resolveRelativeUrl(url, baseUrl) {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+
+  // Handle relative URLs
+  if (url.startsWith('/')) {
+    const baseDomain = baseUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+    return `https://${baseDomain}${url}`;
+  }
+
+  // Handle protocol-relative URLs
+  if (url.startsWith('//')) {
+    return `https:${url}`;
+  }
+
+  // If it's a relative path without leading slash
+  if (!url.startsWith('http')) {
+    const baseDomain = baseUrl.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+    return `https://${baseDomain}/${url}`;
+  }
+
+  return url;
 }
 
 function normalizeSitemapUrl(inputUrl) {
@@ -179,6 +205,9 @@ exports.handler = async (event, context) => {
       console.log(`Processing all ${urls.length} URLs from sitemap`);
     }
 
+    // Extract base URL for resolving relative URLs
+    const baseUrl = sitemapUrl.replace(/\/sitemap\.xml.*$/, '');
+
     const results = [];
     let processed = 0;
     let found = 0;
@@ -200,7 +229,7 @@ exports.handler = async (event, context) => {
 
       const batchPromises = batch.map(async (url) => {
         try {
-          const htmlContent = await scrapeUrl(url);
+          const htmlContent = await scrapeUrl(url, baseUrl);
 
           const containsQuery = searchInContent(htmlContent, query);
 
