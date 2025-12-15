@@ -67,7 +67,14 @@ class CrawlMapperApp {
                 return;
             }
             
-            const response = await fetch('/.netlify/functions/search', {
+            // Determine the correct API endpoint based on environment
+            const apiEndpoint = window.location.hostname === 'localhost' ||
+                               window.location.hostname === '127.0.0.1' ||
+                               window.location.protocol === 'file:'
+                               ? '/api/search'
+                               : '/.netlify/functions/search';
+            
+            const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -241,32 +248,44 @@ class CrawlMapperApp {
             return;
         }
 
-        const { sitemapUrl, query, matchingUrls, totalPages, foundPages } = this.currentSearchData;
+        const { sitemapUrl, query, matchingUrls, totalPages, foundPages, allResults } = this.currentSearchData;
         
-        const exportData = {
-            tool: 'CrawlMapper',
-            version: '2.2.0',
-            timestamp: new Date().toISOString(),
-            search: {
-                sitemapUrl,
-                query,
-                totalPages,
-                foundPages
-            },
-            results: matchingUrls.map((url, index) => ({
-                index: index + 1,
-                url,
-                status: 'MATCH_FOUND'
-            }))
-        };
-
-        const dataStr = JSON.stringify(exportData, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        // Create CSV header
+        const headers = ['Index', 'URL', 'Status', 'Contains Query'];
+        
+        // Create CSV rows
+        const rows = allResults.map((result, index) => [
+            index + 1,
+            result.url,
+            result.found ? 'MATCH_FOUND' : 'NO_MATCH',
+            result.found ? 'YES' : 'NO'
+        ]);
+        
+        // Combine header and rows
+        const csvContent = [headers, ...rows]
+            .map(row => row.map(field => `"${field}"`).join(','))
+            .join('\n');
+        
+        // Add metadata as comments at the top
+        const metadata = [
+            `# CrawlMapper Export`,
+            `# Tool: CrawlMapper v2.2.0`,
+            `# Generated: ${new Date().toISOString()}`,
+            `# Sitemap: ${sitemapUrl}`,
+            `# Query: "${query}"`,
+            `# Total Pages: ${totalPages}`,
+            `# Found Pages: ${foundPages}`,
+            ''
+        ].join('\n');
+        
+        const fullCsvContent = metadata + csvContent;
+        
+        const dataBlob = new Blob([fullCsvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(dataBlob);
         
         const link = document.createElement('a');
         link.href = url;
-        link.download = `crawlmapper-results-${Date.now()}.json`;
+        link.download = `crawlmapper-export-${Date.now()}.csv`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

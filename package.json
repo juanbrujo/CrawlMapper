@@ -23,7 +23,13 @@
     "dev": "node server.js",
     "netlify:dev": "netlify dev",
     "netlify:deploy": "netlify deploy --prod",
-    "netlify:deploy:preview": "netlify deploy"
+    "netlify:deploy:preview": "netlify deploy",
+    "setup": "npm install && cd netlify/functions && npm install",
+    "setup:functions": "cd netlify/functions && npm install",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:patch": "standard-version --release-as patch",
+    "release:major": "standard-version --release-as major"
   },
   "dependencies": {
     "axios": "^1.13.2",
@@ -32,7 +38,16 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "vitest": "^1.0.0",
-    "netlify-cli": "^17.0.0"
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
+    "husky": "^9.1.7",
+    "netlify-cli": "^17.0.0",
+    "standard-version": "^9.5.0",
+    "vitest": "^1.0.0"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }
