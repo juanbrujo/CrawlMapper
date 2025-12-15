@@ -1,0 +1,22 @@
+{
+  "name": "suri-crawl",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A sitemap content search tool that crawls sitemaps and searches for specific terms in webpage content",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": ["sitemap", "web-scraping", "content-search", "crawler"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "vitest": "^1.0.0"
+  }
+}
