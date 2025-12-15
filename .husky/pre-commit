@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+# Run tests only if test files exist
+if find . -name "*.test.*" -o -name "*.spec.*" | grep -v node_modules | head -1 | read; then
+  npm test
+fi

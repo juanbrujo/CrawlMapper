@@ -1,0 +1,31 @@
+# <type>(<scope>): <subject>
+# 
+# <body>
+# 
+# <footer>
+
+# Type should be one of the following:
+# * feat: A new feature
+# * fix: A bug fix
+# * docs: Documentation only changes
+# * style: Changes that do not affect the meaning of the code
+# * refactor: A code change that neither fixes a bug nor adds a feature
+# * perf: A code change that improves performance
+# * test: Adding missing tests or correcting existing tests
+# * build: Changes that affect the build system or external dependencies
+# * ci: Changes to our CI configuration files and scripts
+# * chore: Other changes that don't modify src or test files
+# * revert: Reverts a previous commit
+
+# Scope is optional and should be a noun that describes the section of codebase
+
+# Subject should use imperative mood and not capitalize first letter
+
+# Body is optional and should explain what and why vs. how
+
+# Footer is optional and should contain any breaking changes or issue references
+
+# Examples:
+# feat(auth): add user login functionality
+# fix(ui): resolve button alignment issue
+# docs: update installation instructions

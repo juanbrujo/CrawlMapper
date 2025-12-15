@@ -1,0 +1,8 @@
+{
+  "description": "A sitemap content search tool that crawls sitemaps and searches for specific terms in webpage content",
+  "author": "Jorge Epuñan <juanbrujo@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juanbrujo/CrawlMapper.git"
+  }
+}
