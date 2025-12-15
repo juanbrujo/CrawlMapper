@@ -1,8 +1,0 @@
-# SPA routing - redirect all non-file requests to index.html
-/*    /index.html   200
-
-# API routing - redirect API calls to Netlify Functions
-/api/*  /.netlify/functions/:splat  200
-
-# Handle 404s
-/404.html  /404.html  404

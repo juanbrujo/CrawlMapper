@@ -14,6 +14,11 @@
 
 # API Redirect to Netlify Functions (must be before catch-all)
 [[redirects]]
+  from = "/api/search"
+  to = "/.netlify/functions/search"
+  status = 200
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200

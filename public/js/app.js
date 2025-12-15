@@ -67,7 +67,7 @@ class CrawlMapperApp {
                 return;
             }
             
-            const response = await fetch('/api/search', {
+            const response = await fetch('/.netlify/functions/search', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -245,7 +245,7 @@ class CrawlMapperApp {
         
         const exportData = {
             tool: 'CrawlMapper',
-            version: '2.1.0',
+            version: '2.2.0',
             timestamp: new Date().toISOString(),
             search: {
                 sitemapUrl,

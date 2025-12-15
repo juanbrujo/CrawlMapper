@@ -1,6 +1,6 @@
 {
   "name": "crawlmapper-functions",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Netlify Functions for CrawlMapper",
   "main": "search.js",
   "dependencies": {
