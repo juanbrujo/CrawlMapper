@@ -19,6 +19,7 @@ A Node.js application that crawls sitemaps and searches for specific terms in we
 - **Sitemap Parsing**: Fetches and parses XML sitemaps to extract URLs
 - **Web Scraping**: Downloads HTML content from each URL in the sitemap
 - **Content Search**: Searches for specific terms in the actual page content
+- **Smart URL Handling**: Accepts various domain formats and auto-appends /sitemap.xml
 - **Progress Tracking**: Shows real-time progress during crawling
 - **Error Handling**: Gracefully handles network errors and timeouts
 - **Rate Limiting**: Includes delays between requests to be respectful to servers
@@ -30,6 +31,19 @@ A Node.js application that crawls sitemaps and searches for specific terms in we
    ```bash
    npm install
    ```
+
+## Quick Start
+
+```bash
+# Use default settings (searches for "fillout" in surirefugios.com)
+node index.js
+
+# Search for any term in any website using simple domain format
+node index.js --url "example.com" --query "your-search-term"
+
+# Search using full URL format
+node index.js --url "https://www.example.com" --query "contact"
+```
 
 ## Usage
 
@@ -143,30 +157,46 @@ headers: {
 
 The tool provides detailed progress information and final results:
 
+### Successful Crawl
 ```
 === CrawlMapper ===
-Target: https://www.surirefugios.com/
-Search term: "fillout"
+Target: https://www.google.com/sitemap.xml
+Search term: "privacy"
 ===================
 
-Fetching sitemap from: https://www.surirefugios.com/
+Fetching sitemap from: https://www.google.com/sitemap.xml
 Found 42 URLs in sitemap
 
-Searching for "fillout" in 42 pages...
+Searching for "privacy" in 42 pages...
 Progress: 10/42
 
-✓ Found "fillout" in: https://www.example.com/page1
-✓ Found "fillout" in: https://www.example.com/page2
+✓ Found "privacy" in: https://www.google.com/policies
+✓ Found "privacy" in: https://www.google.com/privacy
 20/42
 
 === RESULTS ===
 Total pages processed: 42
-Pages containing "fillout": 2
-Pages without "fillout": 40
+Pages containing "privacy": 2
+Pages without "privacy": 40
 
 === URLs containing the search term ===
-1. https://www.example.com/page1
-2. https://www.example.com/page2
+1. https://www.google.com/policies
+2. https://www.google.com/privacy
+```
+
+### Sitemap Not Found
+```
+=== CrawlMapper ===
+Target: https://www.example.com/sitemap.xml
+Search term: "fillout"
+===================
+
+Fetching sitemap from: https://www.example.com/sitemap.xml
+Error: Sitemap not found: Server returned 404 status code
+Failed to crawl sitemap: Sitemap not found: Server returned 404 status code
+
+The sitemap.xml file could not be found at the provided URL.
+Please check that the website exists and has a sitemap.xml file.
 ```
 
 ## Error Handling
@@ -196,6 +226,31 @@ ISC
 4. Add tests if applicable
 5. Submit a pull request
 
+## Troubleshooting
+
+### Common Issues
+
+**Sitemap not found (404/403/406 errors):**
+- Verify the website exists and is accessible
+- Some websites don't have sitemap.xml files
+- Try different common sitemap locations like `/sitemap_index.xml`
+
+**Network timeouts:**
+- Some websites may be slow to respond
+- The default timeout is 10 seconds
+- Check your internet connection
+
+**No results found:**
+- Try different search terms
+- Verify the sitemap contains URLs
+- Check that the website's content matches your search term
+
+### Tips
+- Use simple domain names (e.g., `example.com`) for easiest usage
+- The tool automatically handles `www` and HTTPS protocols
+- Search is case-insensitive
+- Progress is shown every 10 pages processed
+
 ## Notes
 
 - The tool includes a 500ms delay between requests to be respectful to servers
@@ -203,3 +258,4 @@ ISC
 - Only successful HTTP responses are processed
 - Progress is logged every 10 pages processed
 - URLs containing the search term are highlighted in real-time
+- Simple domain formats are automatically converted to proper sitemap URLs
