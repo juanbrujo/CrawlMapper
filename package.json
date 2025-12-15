@@ -1,6 +1,6 @@
 {
   "name": "crawlmapper",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "type": "module",
   "description": "A sitemap content search tool that crawls sitemaps and searches for specific terms in webpage content",
   "main": "index.js",
