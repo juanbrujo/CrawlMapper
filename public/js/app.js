@@ -16,6 +16,7 @@ class CrawlMapperApp {
     this.exportBtn = document.getElementById('exportBtn');
 
     this.currentSearchData = null;
+    this.currentBaseUrl = null;
 
     this.init();
   }
@@ -39,6 +40,35 @@ class CrawlMapperApp {
     this.searchBtn.disabled = !isValid;
 
     return isValid;
+  }
+
+  resolveRelativeUrl(url, baseUrl) {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+
+    // Handle relative URLs
+    if (url.startsWith('/')) {
+      const baseDomain = baseUrl
+        .replace(/^https?:\/\//, '')
+        .replace(/\/.*$/, '');
+      return `https://${baseDomain}${url}`;
+    }
+
+    // Handle protocol-relative URLs
+    if (url.startsWith('//')) {
+      return `https:${url}`;
+    }
+
+    // If it's a relative path without leading slash
+    if (!url.startsWith('http')) {
+      const baseDomain = baseUrl
+        .replace(/^https?:\/\//, '')
+        .replace(/\/.*$/, '');
+      return `https://${baseDomain}/${url}`;
+    }
+
+    return url;
   }
 
   async handleSearch(e) {
@@ -218,6 +248,11 @@ class CrawlMapperApp {
   showResults(data) {
     this.currentSearchData = data;
 
+    // Extract and store base URL for resolving relative URLs in links
+    if (data.sitemapUrl) {
+      this.currentBaseUrl = data.sitemapUrl.replace(/\/sitemap\.xml.*$/, '');
+    }
+
     let summary = `Found ${data.foundPages} pages containing "${data.query}"`;
 
     if (data.totalUrlsFound && data.totalUrlsFound !== data.totalPages) {
@@ -279,8 +314,13 @@ class CrawlMapperApp {
     const item = document.createElement('div');
     item.className = 'result-item';
 
+    // Resolve relative URLs to absolute URLs for the link
+    const resolvedUrl = this.currentBaseUrl
+      ? this.resolveRelativeUrl(url, this.currentBaseUrl)
+      : url;
+
     item.innerHTML = `
-            <a href="${url}" target="_blank" class="result-url">
+            <a href="${resolvedUrl}" target="_blank" class="result-url">
                 ${index}. ${url}
             </a>
             <div class="result-status">✓ MATCH FOUND</div>
@@ -308,6 +348,7 @@ class CrawlMapperApp {
   resetForm() {
     this.urlInput.value = '';
     this.queryInput.value = '';
+    this.currentBaseUrl = null;
     this.hideLoader();
     this.hideResults();
     this.hideError();
