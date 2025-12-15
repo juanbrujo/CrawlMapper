@@ -1,12 +1,15 @@
 # CrawlMapper
 
 ```
- █████╗ ██╗     ███████╗███████╗███╗   ██╗    ███████╗███████╗████████╗██╗   ██╗██████╗
-██╔══██╗██║     ██╔════╝██╔════╝████╗  ██║    ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
-███████║██║     █████╗  █████╗  ██╔██╗ ██║    ███████╗█████╗     ██║   ██║   ██║██████╔╝
-██╔══██║██║     ██╔══╝  ██╔══╝  ██║╚██╗██║    ╚════██║██╔══╝     ██║   ██║   ██║██╔═══╝
-██║  ██║███████╗███████╗███████╗██║ ╚████║    ███████║███████╗   ██║   ╚██████╔╝██║
-╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═══╝    ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝
+   _____                    _ __  __                             
+  / ____|                  | |  \/  |                            
+ | |     _ __ __ ___      _| | \  / | __ _ _ __  _ __   ___ _ __ 
+ | |    | '__/ _` \ \ /\ / / | |\/| |/ _` | '_ \| '_ \ / _ \ '__|
+ | |____| | | (_| |\ V  V /| | |  | | (_| | |_) | |_) |  __/ |   
+  \_____|_|  \__,_| \_/\_/ |_|_|  |_|\__,_| .__/| .__/ \___|_|   
+                                          | |   | |              
+                                          |_|   |_|              
+
 ```
 
 A Node.js application that crawls sitemaps and searches for specific terms in webpage content.
@@ -92,55 +95,6 @@ node index.js --query "pricing"
 # Search for "login" in a custom sitemap
 node index.js --url "https://mysite.com/sitemap.xml" --query "login"
 ```
-
-## API Reference
-
-### `fetchSitemap(sitemapUrl)`
-
-Fetches and parses a sitemap.xml from a given URL.
-
-**Parameters:**
-- `sitemapUrl` (string): The URL of the sitemap.xml
-
-**Returns:** Promise<string[]> - Array of URLs found in the sitemap
-
-### `scrapeUrl(url)`
-
-Scrapes HTML content from a given URL.
-
-**Parameters:**
-- `url` (string): The URL to scrape
-
-**Returns:** Promise<string|null> - The HTML content of the page or null if failed
-
-### `searchInContent(htmlContent, query)`
-
-Searches for a query term in HTML content.
-
-**Parameters:**
-- `htmlContent` (string): The HTML content to search
-- `query` (string): The search term to look for
-
-**Returns:** boolean - True if the query term is found, false otherwise
-
-### `crawlSitemapAndSearch(sitemapUrl, query)`
-
-Main function that crawls sitemap and searches for query term in page content.
-
-**Parameters:**
-- `sitemapUrl` (string): The URL of the sitemap.xml
-- `query` (string): The search term to look for in page content
-
-**Returns:** Promise<Array<{url: string, found: boolean}>> - Array of results with URL and found status
-
-### `getMatchingUrls(results)`
-
-Gets only the URLs that contain the search term.
-
-**Parameters:**
-- `results` (Array): The search results from crawlSitemapAndSearch
-
-**Returns:** string[] - Array of URLs that contain the search term
 
 ## Configuration
 
