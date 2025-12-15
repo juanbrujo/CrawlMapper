@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 - add startup message to server for better UX ([3511060](https://github.com/juanbrujo/CrawlMapper/commit/35110602f93be57229356811f7efe84e15a5729e))
+- repair corrupted syntax in index.js and search.js ([3c532d3](https://github.com/juanbrujo/CrawlMapper/commit/3c532d35fc2404ed41dd8fa729981ce605e80a54))
 
 ### [2.2.1](https://github.com/juanbrujo/CrawlMapper/compare/v2.2.0...v2.2.1) (2025-12-15)
 
