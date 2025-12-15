@@ -54,4 +54,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'CrawlMapper API is running' });
 });
 
-app.listen(PORT, () => {});
+app.listen(PORT, () => {
+  console.log(`🚀 CrawlMapper server running on http://localhost:${PORT}`);
+  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+});

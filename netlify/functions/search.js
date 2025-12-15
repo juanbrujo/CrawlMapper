@@ -1,9 +1,24 @@
 const axios = require('axios');
 const xml2js = require('xml2js');
 
+// Timeout configurations
+const SITEMAP_TIMEOUT = 15000; // 15 seconds for sitemap fetch
+const URL_TIMEOUT = 8000; // 8 seconds for individual URL scraping
+const MAX_URLS_TO_PROCESS = 30; // Reduced to prevent timeouts
+const BATCH_DELAY = 200; // Reduced delay between batches
+const FUNCTION_TIMEOUT = 25000; // 25 seconds (5 second buffer before 30s limit)
+const MIN_BATCHES = 3; // Process at least 3 batches before early termination
+const MAX_BATCHES = 6; // Maximum batches to process
+
 async function fetchSitemap(sitemapUrl) {
   try {
-    const response = await axios.get(sitemapUrl);
+    const response = await axios.get(sitemapUrl, {
+      timeout: SITEMAP_TIMEOUT,
+      headers: {
+        'User-Agent': 'CrawlMapper/2.3.0 (Sitemap Analyzer)',
+        Accept: 'application/xml, text/xml, */*',
+      },
+    });
     const parser = new xml2js.Parser();
     const result = await parser.parseStringPromise(response.data);
 
@@ -30,6 +45,11 @@ async function fetchSitemap(sitemapUrl) {
         );
       }
     }
+    if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+      throw new Error(
+        'Sitemap request timeout: The sitemap is taking too long to load'
+      );
+    }
     throw new Error(`Error fetching sitemap: ${error.message}`);
   }
 }
@@ -37,15 +57,24 @@ async function fetchSitemap(sitemapUrl) {
 async function scrapeUrl(url) {
   try {
     const response = await axios.get(url, {
-      timeout: 10000,
+      timeout: URL_TIMEOUT,
       headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'User-Agent': 'CrawlMapper/2.3.0 (Content Search Tool)',
+        Accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       },
+      maxContentLength: 5 * 1024 * 1024, // 5MB max content size
+      maxBodyLength: 5 * 1024 * 1024,
     });
     return response.data;
   } catch (error) {
-    console.warn(`Warning: Could not scrape ${url}: ${error.message}`);
+    if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+      console.warn(`Timeout: Could not scrape ${url} within ${URL_TIMEOUT}ms`);
+    } else if (error.response?.status === 404) {
+      console.warn(`Not found: ${url} returned 404`);
+    } else {
+      console.warn(`Error: Could not scrape ${url}: ${error.message}`);
+    }
     return null;
   }
 }
@@ -79,6 +108,16 @@ function normalizeSitemapUrl(inputUrl) {
   return cleanUrl;
 }
 
+// Timeout wrapper to prevent function timeout
+function withTimeout(promise, timeoutMs, errorMessage) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+    ),
+  ]);
+}
+
 exports.handler = async (event, context) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -107,6 +146,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    const startTime = Date.now();
     const requestBody = JSON.parse(event.body || '{}');
     const { url, query } = requestBody;
 
@@ -127,13 +167,36 @@ exports.handler = async (event, context) => {
     const sitemapUrl = normalizeSitemapUrl(url);
 
     const urls = await fetchSitemap(sitemapUrl);
+
+    // Limit URLs to process to prevent timeouts
+    const urlsToProcess = urls.slice(0, MAX_URLS_TO_PROCESS);
+
+    if (urls.length > MAX_URLS_TO_PROCESS) {
+      console.log(
+        `Limiting search to ${MAX_URLS_TO_PROCESS} URLs out of ${urls.length} total`
+      );
+    }
+
     const results = [];
     let processed = 0;
     let found = 0;
+    let batchesProcessed = 0;
 
     const batchSize = 5;
-    for (let i = 0; i < urls.length; i += batchSize) {
-      const batch = urls.slice(i, i + batchSize);
+    for (let i = 0; i < urlsToProcess.length; i += batchSize) {
+      // Check remaining time
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = FUNCTION_TIMEOUT - elapsedTime;
+
+      if (remainingTime <= 5000) {
+        // 5 second buffer
+        console.log(
+          `Timeout approaching (${remainingTime}ms remaining), stopping early`
+        );
+        break;
+      }
+
+      const batch = urlsToProcess.slice(i, i + batchSize);
 
       const batchPromises = batch.map(async (url) => {
         try {
@@ -159,15 +222,37 @@ exports.handler = async (event, context) => {
 
       processed += batch.length;
       found += batchResults.filter((r) => r.found).length;
+      batchesProcessed++;
 
-      if (i + batchSize < urls.length) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Early termination conditions
+      const hasFoundResults = found > 0;
+      const reachedMinBatches = batchesProcessed >= MIN_BATCHES;
+      const reachedMaxBatches = batchesProcessed >= MAX_BATCHES;
+
+      if (hasFoundResults && reachedMinBatches) {
+        console.log(
+          `Found ${found} results after ${batchesProcessed} batches, stopping early`
+        );
+        break;
+      }
+
+      if (reachedMaxBatches) {
+        console.log(`Reached maximum batches (${MAX_BATCHES}), stopping`);
+        break;
+      }
+
+      // Reduced delay between batches
+      if (i + batchSize < urlsToProcess.length) {
+        await new Promise((resolve) => setTimeout(resolve, BATCH_DELAY));
       }
     }
 
     const matchingUrls = results
       .filter((result) => result.found)
       .map((result) => result.url);
+
+    const totalElapsedTime = Date.now() - startTime;
+    const timedOut = totalElapsedTime >= FUNCTION_TIMEOUT;
 
     return {
       statusCode: 200,
@@ -184,21 +269,38 @@ exports.handler = async (event, context) => {
           foundPages: matchingUrls.length,
           matchingUrls,
           allResults: results,
+          processingInfo: {
+            totalUrlsFound: urls.length,
+            urlsProcessed: processed,
+            batchesProcessed: batchesProcessed,
+            elapsedTimeMs: totalElapsedTime,
+            timedOut: timedOut,
+            timeoutLimit: FUNCTION_TIMEOUT,
+          },
         },
       }),
     };
   } catch (error) {
     console.error('[Netlify Function] Error:', error.message);
 
+    // Check if it's a timeout error
+    const isTimeout =
+      error.message.includes('timeout') ||
+      error.message.includes('Function timeout');
+    const statusCode = isTimeout ? 504 : 500;
+
     return {
-      statusCode: 500,
+      statusCode: statusCode,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        error: error.message,
+        error: isTimeout
+          ? 'Request timed out: The search took too long to complete'
+          : error.message,
         success: false,
+        timeout: isTimeout,
       }),
     };
   }
