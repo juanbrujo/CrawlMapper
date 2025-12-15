@@ -9,7 +9,7 @@ This guide explains how to deploy CrawlMapper to Netlify with serverless functio
 ✅ **Frontend + Backend**: Single deployment for both frontend and API  
 ✅ **Auto-scaling**: Serverless functions scale automatically  
 ✅ **Custom Domains**: Support for custom domains and HTTPS  
-✅ **Form Handling**: Built-in form handling capabilities  
+✅ **Form Handling**: Built-in form handling capabilities
 
 ## Prerequisites
 
@@ -22,6 +22,7 @@ This guide explains how to deploy CrawlMapper to Netlify with serverless functio
 ### Method 1: Git Integration (Recommended)
 
 1. **Push to Git Repository**
+
    ```bash
    git add .
    git commit -m "Prepare for Netlify deployment"
@@ -41,20 +42,23 @@ This guide explains how to deploy CrawlMapper to Netlify with serverless functio
 ### Method 2: Netlify CLI
 
 1. **Install Netlify CLI**
+
    ```bash
    npm install -g netlify-cli
    ```
 
 2. **Login to Netlify**
+
    ```bash
    netlify login
    ```
 
 3. **Deploy**
+
    ```bash
    # Deploy to preview
    npm run netlify:deploy:preview
-   
+
    # Deploy to production
    npm run netlify:deploy
    ```
@@ -62,6 +66,7 @@ This guide explains how to deploy CrawlMapper to Netlify with serverless functio
 ### Method 3: Drag & Drop
 
 1. **Build locally** (if needed)
+
    ```bash
    # No build step required for this project
    ```
@@ -92,6 +97,7 @@ This guide explains how to deploy CrawlMapper to Netlify with serverless functio
 ## Configuration Files
 
 ### netlify.toml
+
 ```toml
 [build]
   publish = "public"
@@ -108,7 +114,8 @@ This guide explains how to deploy CrawlMapper to Netlify with serverless functio
   status = 200
 ```
 
-### public/_redirects
+### public/\_redirects
+
 ```
 /*    /index.html   200
 /api/*  /.netlify/functions/:splat  200
@@ -124,6 +131,7 @@ For production deployments, you may want to set environment variables:
 ## Local Development
 
 ### Start Development Server
+
 ```bash
 # Start both frontend and functions locally
 npm run netlify:dev
@@ -133,6 +141,7 @@ npm run dev
 ```
 
 ### Test Functions Locally
+
 ```bash
 # Start Netlify dev environment
 netlify dev
@@ -170,11 +179,13 @@ The search functionality is implemented as a Netlify Function:
 ## Performance Optimizations
 
 ### Frontend
+
 - Static file caching configured
 - Gzip compression enabled
 - CDN distribution automatic
 
 ### Backend
+
 - Serverless cold start optimization
 - Batch processing to avoid timeouts
 - Efficient XML parsing
@@ -183,14 +194,17 @@ The search functionality is implemented as a Netlify Function:
 ## Monitoring and Analytics
 
 ### Netlify Analytics
+
 - Enable in Site settings → Analytics
 - View traffic, function usage, and performance
 
 ### Function Logs
+
 - Access via Site dashboard → Functions → search → Logs
 - Real-time log streaming available
 
 ### Error Tracking
+
 - Function errors logged automatically
 - 500 errors trigger email notifications (configurable)
 
@@ -211,21 +225,25 @@ The search functionality is implemented as a Netlify Function:
 ## Troubleshooting
 
 ### Build Failures
+
 - Check build logs in Netlify dashboard
 - Verify `netlify.toml` configuration
 - Ensure Node.js version compatibility
 
 ### Function Errors
+
 - Check function logs in dashboard
 - Verify CORS headers if frontend can't connect
 - Test function locally with `netlify dev`
 
 ### Routing Issues
+
 - Verify `_redirects` file in `public/` directory
 - Check SPA routing configuration
 - Test 404 handling
 
 ### Performance Issues
+
 - Monitor function execution time
 - Check for timeout errors
 - Consider increasing function memory/timeout
@@ -233,12 +251,14 @@ The search functionality is implemented as a Netlify Function:
 ## Cost Estimation
 
 ### Free Tier Limits
+
 - **Bandwidth**: 100GB/month
 - **Function invocations**: 125,000/month
 - **Function execution time**: 100 hours/month
 - **Build minutes**: 300/month
 
 ### Paid Plans
+
 - **Pro**: $19/month - Higher limits and features
 - **Business**: $99/month - Advanced features
 - **Enterprise**: Custom pricing
@@ -246,12 +266,14 @@ The search functionality is implemented as a Netlify Function:
 ## Security
 
 ### Built-in Security
+
 - HTTPS enforced
 - DDoS protection
 - Bot filtering
 - Security headers configured
 
 ### Additional Recommendations
+
 - Keep dependencies updated
 - Monitor function logs for suspicious activity
 - Use environment variables for sensitive data

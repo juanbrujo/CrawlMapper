@@ -1,86 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>404 - Page Not Found | CrawlMapper</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        .error-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: var(--space-xl);
-        }
-        
-        .error-code {
-            font-size: 8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-shadow: var(--shadow-glow-strong);
-            margin-bottom: var(--space-lg);
-            line-height: 1;
-        }
-        
-        .error-message {
-            font-size: var(--font-size-xl);
-            color: var(--text-secondary);
-            margin-bottom: var(--space-2xl);
-            max-width: 500px;
-        }
-        
-        .home-link {
-            display: inline-block;
-            padding: var(--space-md) var(--space-xl);
-            background: transparent;
-            border: var(--border-width) solid var(--border-color);
-            color: var(--text-primary);
-            font-family: var(--font-mono);
-            font-size: var(--font-size-base);
-            font-weight: 700;
-            text-transform: uppercase;
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            transition: all 0.3s ease;
-        }
-        
-        .home-link:hover {
-            background: var(--border-color);
-            color: var(--bg-primary);
-            box-shadow: var(--shadow-glow-strong);
-        }
+      .error-page {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+        padding: var(--space-xl);
+      }
+
+      .error-code {
+        font-size: 8rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        text-shadow: var(--shadow-glow-strong);
+        margin-bottom: var(--space-lg);
+        line-height: 1;
+      }
+
+      .error-message {
+        font-size: var(--font-size-xl);
+        color: var(--text-secondary);
+        margin-bottom: var(--space-2xl);
+        max-width: 500px;
+      }
+
+      .home-link {
+        display: inline-block;
+        padding: var(--space-md) var(--space-xl);
+        background: transparent;
+        border: var(--border-width) solid var(--border-color);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: var(--font-size-base);
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        border-radius: var(--border-radius);
+        transition: all 0.3s ease;
+      }
+
+      .home-link:hover {
+        background: var(--border-color);
+        color: var(--bg-primary);
+        box-shadow: var(--shadow-glow-strong);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="error-page">
-        <div class="error-code">404</div>
-        <div class="error-message">
-            The page you're looking for doesn't exist in the sitemap.
-        </div>
-        <a href="/" class="home-link">Return True</a>
+      <div class="error-code">404</div>
+      <div class="error-message">
+        The page you're looking for doesn't exist in the sitemap.
+      </div>
+      <a href="/" class="home-link">Return True</a>
     </div>
-    
+
     <script>
-        // Add some interactive effects
-        document.addEventListener('DOMContentLoaded', () => {
-            const errorCode = document.querySelector('.error-code');
-            let scale = 1;
-            let direction = 1;
-            
-            setInterval(() => {
-                scale += direction * 0.01;
-                if (scale >= 1.05 || scale <= 0.95) {
-                    direction *= -1;
-                }
-                errorCode.style.transform = `scale(${scale})`;
-            }, 50);
-        });
+      // Add some interactive effects
+      document.addEventListener('DOMContentLoaded', () => {
+        const errorCode = document.querySelector('.error-code');
+        let scale = 1;
+        let direction = 1;
+
+        setInterval(() => {
+          scale += direction * 0.01;
+          if (scale >= 1.05 || scale <= 0.95) {
+            direction *= -1;
+          }
+          errorCode.style.transform = `scale(${scale})`;
+        }, 50);
+      });
     </script>
-</body>
+  </body>
 </html>

@@ -4,5 +4,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/juanbrujo/CrawlMapper.git"
+  },
+  "scripts": {
+    "prebump": "npm run build"
   }
 }

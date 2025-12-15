@@ -1,9 +1,4 @@
 import { defineConfig } from 'vitest/config';
-
 export default defineConfig({
-  test: {
-    environment: 'node',
-    globals: true,
-    testTimeout: 30000, // 30 seconds for integration tests
-  },
+  test: { environment: 'node', globals: !0, testTimeout: 3e4 },
 });

@@ -64,6 +64,7 @@ Use /new-endpoint instead."
    - `fix` commits → patch version bump
    - BREAKING CHANGE in footer → major version bump
 3. **Automatic Actions**:
+   - Runs build process (removes console.log, strips comments)
    - Updates `package.json` version
    - Updates `package-lock.json` version
    - Updates `CHANGELOG.md` with new release notes
@@ -87,11 +88,43 @@ git push --follow-tags origin main
 npm publish
 ```
 
+## Build Process
+
+### Purpose
+
+The build process optimizes code for production by:
+
+- **Removing console.log statements** - Strips all debug logging
+- **Preserving console.error** - Keeps error logging for debugging
+- **Stripping all comments** - Removes single-line and multi-line comments
+- **Minifying code** - Reduces file size and improves performance
+- **2-space indentation** - Maintains consistent formatting
+
+### Build Script
+
+- **File**: `build.js`
+- **Command**: `npm run build`
+- **Dependencies**: `terser` for JavaScript minification
+
+### Files Processed
+
+- All JavaScript files (`.js`, `.mjs`) except:
+  - Build scripts (`build.js`)
+  - Configuration files (`vite.config.js`, `eslint.config.js`)
+- Skipped directories: `node_modules`, `dist`, `build`, `.git`, `.husky`
+
+### Build Output
+
+- Original files are modified in-place
+- Code is minified and optimized
+- Console statements are cleaned up
+- Comments are completely removed
+
 ## Git Hooks
 
 The project includes automated git hooks:
 
-- **pre-commit**: Runs tests before allowing commits (if test files exist)
+- **pre-commit**: Runs tests, build process, linting, and formatting checks
 - **commit-msg**: Validates commit messages follow conventional commit format
 
 ## Files Modified During Release
@@ -100,16 +133,18 @@ The project includes automated git hooks:
 - `package-lock.json` - Version number updated
 - `CHANGELOG.md` - New release notes added
 - Git tags created automatically
+- JavaScript files - Build process applied (console.log removed, comments stripped)
 
 ## Configuration Files
 
 - `.gitmessage` - Commit message template (used by git config)
-- `.versionrc` - Configuration for standard-version
+- `.versionrc` - Configuration for standard-version with build hook
 - `.husky/commit-msg` - Commit message validation hook
-- `.husky/pre-commit` - Pre-commit test hook
-- `package.json` - Contains commitlint configuration and release scripts
+- `.husky/pre-commit` - Pre-commit hook with build, test, lint, and format checks
+- `package.json` - Contains commitlint configuration, release scripts, and build script
 - `.eslintrc.json` - ESLint configuration with 2-space indentation
 - `.prettierrc.json` - Prettier configuration with 2-space indentation
+- `build.js` - Build script for production optimization
 
 ## Code Quality Tools
 
@@ -130,8 +165,9 @@ The project includes automated git hooks:
 The pre-commit hook automatically runs:
 
 1. Tests (if test files exist)
-2. ESLint validation
-3. Prettier formatting check
+2. Build process (removes console.log, strips comments, keeps console.error)
+3. ESLint validation
+4. Prettier formatting check
 
 ## Benefits
 
@@ -143,5 +179,7 @@ The pre-commit hook automatically runs:
 6. **Test Integration**: Tests run before commits
 7. **Code Quality**: ESLint and Prettier ensure consistent code style
 8. **2-Space Indentation**: Standardized formatting across the project
+9. **Production Optimization**: Build process removes debug code and optimizes performance
+10. **Debug Logging**: Preserves console.error while removing console.log
 
-This system ensures consistent, automated versioning and release management with comprehensive code quality enforcement following industry best practices.
+This system ensures consistent, automated versioning and release management with comprehensive code quality enforcement and production optimization following industry best practices.

@@ -1,14 +1,14 @@
 # CrawlMapper
 
 ```
-   _____                    _ __  __                             
-  / ____|                  | |  \/  |                            
- | |     _ __ __ ___      _| | \  / | __ _ _ __  _ __   ___ _ __ 
+   _____                    _ __  __
+  / ____|                  | |  \/  |
+ | |     _ __ __ ___      _| | \  / | __ _ _ __  _ __   ___ _ __
  | |    | '__/ _` \ \ /\ / / | |\/| |/ _` | '_ \| '_ \ / _ \ '__|
- | |____| | | (_| |\ V  V /| | |  | | (_| | |_) | |_) |  __/ |   
-  \_____|_|  \__,_| \_/\_/ |_|_|  |_|\__,_| .__/| .__/ \___|_|   
-                                           | |   | |              
-                                           |_|   |_|              
+ | |____| | | (_| |\ V  V /| | |  | | (_| | |_) | |_) |  __/ |
+  \_____|_|  \__,_| \_/\_/ |_|_|  |_|\__,_| .__/| .__/ \___|_|
+                                           | |   | |
+                                           |_|   |_|
 ```
 
 A sitemap content search tool that crawls sitemaps and searches for specific terms in webpage content.
@@ -40,11 +40,13 @@ A sitemap content search tool that crawls sitemaps and searches for specific ter
 ### Web Interface (Recommended)
 
 1. Start the server:
+
    ```bash
    npm start
    ```
 
 2. Open your browser and navigate to:
+
    ```
    http://localhost:3000
    ```
@@ -119,6 +121,7 @@ node index.js --url "stackoverflow.com" --query "javascript"
 
 **URL Handling:**
 The `--url` parameter accepts various formats and automatically normalizes them:
+
 - `example.com` → `https://www.example.com/sitemap.xml`
 - `https://www.example.com` → `https://www.example.com/sitemap.xml`
 - `https://www.example.com/` → `https://www.example.com/sitemap.xml`
@@ -127,6 +130,7 @@ The `--url` parameter accepts various formats and automatically normalizes them:
 The tool automatically appends `/sitemap.xml` to complete the sitemap URL and handles cases where the sitemap is not found.
 
 **Parameters:**
+
 - `--url`: The domain or full URL to crawl (required)
 - `--query`: The search term to look for in page content (required)
 
@@ -142,8 +146,9 @@ const results = await crawlSitemapAndSearch(
 );
 
 // Get only the URLs that contain the search term
-const matchingUrls = results.filter(result => result.found)
-                          .map(result => result.url);
+const matchingUrls = results
+  .filter((result) => result.found)
+  .map((result) => result.url);
 
 console.log('Found URLs:', matchingUrls);
 ```
@@ -172,6 +177,7 @@ node index.js --url "github.com" --query "about"
 ## Configuration
 
 ### Request Timeout
+
 Default timeout is 10 seconds. Modify in `scrapeUrl()` function:
 
 ```javascript
@@ -182,13 +188,15 @@ const response = await axios.get(url, {
 ```
 
 ### Rate Limiting
+
 Default delay between requests is 500ms. Modify in `crawlSitemapAndSearch()`:
 
 ```javascript
-await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay
 ```
 
 ### User Agent
+
 The scraper uses a realistic User-Agent header to avoid being blocked:
 
 ```javascript
@@ -200,16 +208,20 @@ headers: {
 ## Output Format
 
 ### Web Interface Results
+
 The web interface shows:
+
 - **Summary**: Total pages processed and matches found
 - **Matching URLs**: Clickable links to pages containing the search term
 - **Export Option**: Download results as structured JSON
 - **Visual Status**: Color-coded indicators for success/error states
 
 ### Command Line Output
+
 The tool provides detailed progress information and final results:
 
 #### Successful Crawl
+
 ```
 === CrawlMapper ===
 Target: https://www.google.com/sitemap.xml
@@ -237,6 +249,7 @@ Pages without "privacy": 40
 ```
 
 #### Missing Parameters Error
+
 ```
 Error: Both --url and --query parameters are required.
 
@@ -250,6 +263,7 @@ Examples:
 ```
 
 #### Sitemap Not Found
+
 ```
 === CrawlMapper ===
 Target: https://www.example.com/sitemap.xml
@@ -278,11 +292,13 @@ The tool handles various error scenarios:
 ## API Endpoints
 
 ### Web Interface
+
 - `GET /` - Main web interface
 - `POST /api/search` - Search endpoint
 - `GET /api/health` - Health check
 
 ### Search Request
+
 ```javascript
 POST /api/search
 Content-Type: application/json
@@ -294,6 +310,7 @@ Content-Type: application/json
 ```
 
 ### Search Response
+
 ```javascript
 {
   "success": true,
@@ -314,12 +331,14 @@ Content-Type: application/json
 ## Dependencies
 
 ### Production
+
 - `axios`: HTTP client for making requests
 - `xml2js`: XML parser for sitemap processing
 - `express`: Web server framework
 - `cors`: CORS middleware
 
 ### Development
+
 - `vitest`: Testing framework
 
 ## License
@@ -339,26 +358,31 @@ ISC
 ### Common Issues
 
 **Sitemap not found (404/403/406 errors):**
+
 - Verify the website exists and is accessible
 - Some websites don't have sitemap.xml files
 - Try different common sitemap locations like `/sitemap_index.xml`
 
 **Network timeouts:**
+
 - Some websites may be slow to respond
 - The default timeout is 10 seconds
 - Check your internet connection
 
 **No results found:**
+
 - Try different search terms
 - Verify the sitemap contains URLs
 - Check that the website's content matches your search term
 
 **Web interface not loading:**
+
 - Ensure the server is running (`npm start`)
 - Check that port 3000 is available
 - Verify browser console for JavaScript errors
 
 ### Tips
+
 - Use simple domain names (e.g., `example.com`) for easiest usage
 - The tool automatically handles `www` and HTTPS protocols
 - Search is case-insensitive
