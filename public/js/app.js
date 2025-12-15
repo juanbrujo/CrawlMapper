@@ -140,16 +140,22 @@ class CrawlMapperApp {
     if (sitemapSize > 100) {
       this.progressText.innerHTML = `
         <div style="color: #ff9800; font-weight: bold;">
-          ⚠️ Large sitemap detected: ${sitemapSize} pages
+          ⚠️ Large sitemap: ${sitemapSize} pages
         </div>
         <div style="font-size: 0.9em; margin-top: 0.5rem;">
-          This may take several minutes to complete...
+          Processing may take several minutes...
         </div>
       `;
     } else if (sitemapSize > 30) {
       this.progressText.innerHTML = `
-        <div style="color: #2196f3;">
-          📄 Processing ${sitemapSize} pages from sitemap
+        <div style="color: #2196f3; font-weight: bold;">
+          📄 Medium sitemap: ${sitemapSize} pages found
+        </div>
+      `;
+    } else {
+      this.progressText.innerHTML = `
+        <div style="color: #4caf50; font-weight: bold;">
+          📄 Small sitemap: ${sitemapSize} pages found
         </div>
       `;
     }
@@ -193,12 +199,14 @@ class CrawlMapperApp {
     let initialMessage = 'Initializing search...';
     if (sitemapSize) {
       if (sitemapSize > 100) {
-        initialMessage = `Large sitemap detected (${sitemapSize} pages). This may take a while...`;
+        initialMessage = `⚠️ Large sitemap: ${sitemapSize} pages detected - This may take several minutes`;
       } else if (sitemapSize > 30) {
-        initialMessage = `Processing ${sitemapSize} pages from sitemap...`;
+        initialMessage = `📄 Medium sitemap: ${sitemapSize} pages found`;
       } else {
-        initialMessage = `Processing ${sitemapSize} pages from sitemap...`;
+        initialMessage = `📄 Small sitemap: ${sitemapSize} pages found`;
       }
+    } else {
+      initialMessage = `🔍 Searching for "${query}"...`;
     }
 
     this.progressText.textContent = initialMessage;
@@ -222,16 +230,15 @@ class CrawlMapperApp {
       'Almost done...',
     ];
 
-    const largeSitemapMessages = [
-      `Processing large sitemap (${sitemapSize} pages)...`,
-      'Fetching pages in batches...',
-      'Searching through content...',
-      'Analyzing results...',
-      'Finalizing search...',
-    ];
-
-    const messages =
-      sitemapSize && sitemapSize > 100 ? largeSitemapMessages : baseMessages;
+    const sizedMessages = sitemapSize
+      ? [
+          `Crawling sitemap... (${sitemapSize} pages found)`,
+          'Searching for "' + this.searchTerm.textContent + '"...',
+          `Processing ${sitemapSize} pages...`,
+          'Analyzing content...',
+          'Almost done...',
+        ]
+      : baseMessages;
 
     let index = 0;
     const interval = setInterval(() => {
@@ -240,7 +247,8 @@ class CrawlMapperApp {
         return;
       }
 
-      this.progressText.textContent = messages[index % messages.length];
+      this.progressText.textContent =
+        sizedMessages[index % sizedMessages.length];
       index++;
     }, 2000);
   }
