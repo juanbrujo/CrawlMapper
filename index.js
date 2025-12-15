@@ -242,9 +242,6 @@ async function main() {
   }
 }
 
-// Run main function
-main();
-
 // Export functions for use as a module
 export {
   crawlSitemapAndSearch,
@@ -254,3 +251,8 @@ export {
   getMatchingUrls,
   normalizeSitemapUrl
 };
+
+// Run main function only if this file is executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main();
+}

@@ -1,11 +1,16 @@
 {
   "name": "crawlmapper",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "description": "A sitemap content search tool that crawls sitemaps and searches for specific terms in webpage content",
   "main": "index.js",
   "author": "Jorge Epuñan <juanbrujo@gmail.com>",
-  "keywords": ["sitemap", "web-scraping", "content-search", "crawler"],
+  "keywords": [
+    "sitemap",
+    "web-scraping",
+    "content-search",
+    "crawler"
+  ],
   "license": "ISC",
   "engines": {
     "node": ">=16.0.0"
@@ -13,13 +18,21 @@
   "scripts": {
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "start": "node server.js",
+    "dev": "node server.js",
+    "netlify:dev": "netlify dev",
+    "netlify:deploy": "netlify deploy --prod",
+    "netlify:deploy:preview": "netlify deploy"
   },
   "dependencies": {
     "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "vitest": "^1.0.0"
+    "vitest": "^1.0.0",
+    "netlify-cli": "^17.0.0"
   }
 }
