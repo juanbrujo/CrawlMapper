@@ -4,3 +4,9 @@
 if find . -name "*.test.*" -o -name "*.spec.*" | grep -v node_modules | head -1 | read; then
   npm test
 fi
+
+# Run linting
+npm run lint
+
+# Check formatting
+npm run format:check

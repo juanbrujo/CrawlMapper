@@ -29,7 +29,11 @@
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
-    "release:major": "standard-version --release-as major"
+    "release:major": "standard-version --release-as major",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "axios": "^1.13.2",
@@ -40,8 +44,10 @@
   "devDependencies": {
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
+    "eslint": "^9.39.2",
     "husky": "^9.1.7",
     "netlify-cli": "^17.0.0",
+    "prettier": "^3.7.4",
     "standard-version": "^9.5.0",
     "vitest": "^1.0.0"
   },

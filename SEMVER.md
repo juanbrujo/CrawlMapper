@@ -108,6 +108,30 @@ The project includes automated git hooks:
 - `.husky/commit-msg` - Commit message validation hook
 - `.husky/pre-commit` - Pre-commit test hook
 - `package.json` - Contains commitlint configuration and release scripts
+- `.eslintrc.json` - ESLint configuration with 2-space indentation
+- `.prettierrc.json` - Prettier configuration with 2-space indentation
+
+## Code Quality Tools
+
+### ESLint
+
+- **Purpose**: JavaScript linting and code quality
+- **Configuration**: 2-space indentation, single quotes, semicolons
+- **Usage**: `npm run lint` (check) | `npm run lint:fix` (auto-fix)
+
+### Prettier
+
+- **Purpose**: Code formatting
+- **Configuration**: 2-space indentation, 80 character line width
+- **Usage**: `npm run format` (format all files) | `npm run format:check` (verify formatting)
+
+### Pre-commit Hook
+
+The pre-commit hook automatically runs:
+
+1. Tests (if test files exist)
+2. ESLint validation
+3. Prettier formatting check
 
 ## Benefits
 
@@ -117,5 +141,7 @@ The project includes automated git hooks:
 4. **Breaking Change Detection**: Automatic major version bumps for breaking changes
 5. **Git Tagging**: Automatic semantic version tags
 6. **Test Integration**: Tests run before commits
+7. **Code Quality**: ESLint and Prettier ensure consistent code style
+8. **2-Space Indentation**: Standardized formatting across the project
 
-This system ensures consistent, automated versioning and release management following industry best practices.
+This system ensures consistent, automated versioning and release management with comprehensive code quality enforcement following industry best practices.
