@@ -86,6 +86,7 @@ async function crawlSitemapAndSearch(sitemapUrl, query) {
         processed++;
 
         if (processed % 10 === 0) {
+          process.stdout.write('.');
         }
 
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -160,12 +161,18 @@ async function main() {
     const matchingUrls = getMatchingUrls(results);
 
     if (matchingUrls.length > 0) {
-      matchingUrls.forEach((url, index) => {});
+      matchingUrls.forEach((url, index) => {
+        console.log(`${index + 1}. ${url}`);
+      });
     } else {
+      console.log('No pages found containing the search term.');
     }
   } catch (error) {
     console.error('Failed to crawl sitemap:', error.message);
     if (error.message.includes('not found')) {
+      console.error(
+        'Please check that the sitemap URL is correct and accessible.'
+      );
     }
   }
 }
