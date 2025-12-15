@@ -36,6 +36,7 @@ app.post('/api/search', async (req, res) => {
         sitemapUrl,
         query,
         totalPages: results.length,
+        totalUrlsFound: results.length,
         foundPages: matchingUrls.length,
         matchingUrls,
         allResults: results,

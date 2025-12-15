@@ -255,6 +255,7 @@ exports.handler = async (event, context) => {
           sitemapUrl,
           query,
           totalPages: results.length,
+          totalUrlsFound: urls.length,
           foundPages: matchingUrls.length,
           matchingUrls,
           allResults: results,
@@ -265,6 +266,10 @@ exports.handler = async (event, context) => {
             elapsedTimeMs: totalElapsedTime,
             timedOut: timedOut,
             timeoutLimit: FUNCTION_TIMEOUT,
+            limitNote:
+              urls.length > MAX_URLS_TO_PROCESS
+                ? `Limited to ${MAX_URLS_TO_PROCESS} URLs`
+                : 'All URLs processed',
           },
         },
       }),

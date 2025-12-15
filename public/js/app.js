@@ -84,6 +84,11 @@ class CrawlMapperApp {
       const data = await response.json();
 
       if (data.success) {
+        // Show sitemap size information if available
+        const sitemapSize = data.data.totalUrlsFound;
+        if (sitemapSize) {
+          this.updateProgressForSitemapSize(sitemapSize);
+        }
         this.showResults(data.data);
       } else {
         this.showError(data.error || 'Search failed');
@@ -98,6 +103,25 @@ class CrawlMapperApp {
       }
     } finally {
       this.hideLoader();
+    }
+  }
+
+  updateProgressForSitemapSize(sitemapSize) {
+    if (sitemapSize > 100) {
+      this.progressText.innerHTML = `
+        <div style="color: #ff9800; font-weight: bold;">
+          ⚠️ Large sitemap detected: ${sitemapSize} pages
+        </div>
+        <div style="font-size: 0.9em; margin-top: 0.5rem;">
+          This may take several minutes to complete...
+        </div>
+      `;
+    } else if (sitemapSize > 30) {
+      this.progressText.innerHTML = `
+        <div style="color: #2196f3;">
+          📄 Processing ${sitemapSize} pages from sitemap
+        </div>
+      `;
     }
   }
 
@@ -133,13 +157,25 @@ class CrawlMapperApp {
     this.results.classList.remove('hidden');
   }
 
-  showLoader(query) {
+  showLoader(query, sitemapSize = null) {
     this.searchTerm.textContent = query;
-    this.progressText.textContent = 'Initializing search...';
+
+    let initialMessage = 'Initializing search...';
+    if (sitemapSize) {
+      if (sitemapSize > 100) {
+        initialMessage = `Large sitemap detected (${sitemapSize} pages). This may take a while...`;
+      } else if (sitemapSize > 30) {
+        initialMessage = `Processing ${sitemapSize} pages from sitemap...`;
+      } else {
+        initialMessage = `Processing ${sitemapSize} pages from sitemap...`;
+      }
+    }
+
+    this.progressText.textContent = initialMessage;
     this.loader.classList.remove('hidden');
     this.searchBtn.disabled = true;
 
-    this.animateLoaderText();
+    this.animateLoaderText(sitemapSize);
   }
 
   hideLoader() {
@@ -147,14 +183,25 @@ class CrawlMapperApp {
     this.searchBtn.disabled = false;
   }
 
-  animateLoaderText() {
-    const messages = [
+  animateLoaderText(sitemapSize = null) {
+    const baseMessages = [
       'Fetching sitemap...',
       'Parsing URLs...',
       'Searching pages...',
       'Analyzing content...',
       'Almost done...',
     ];
+
+    const largeSitemapMessages = [
+      `Processing large sitemap (${sitemapSize} pages)...`,
+      'Fetching pages in batches...',
+      'Searching through content...',
+      'Analyzing results...',
+      'Finalizing search...',
+    ];
+
+    const messages =
+      sitemapSize && sitemapSize > 100 ? largeSitemapMessages : baseMessages;
 
     let index = 0;
     const interval = setInterval(() => {
@@ -171,7 +218,19 @@ class CrawlMapperApp {
   showResults(data) {
     this.currentSearchData = data;
 
-    const summary = `Found ${data.foundPages} pages containing "${data.query}" out of ${data.totalPages} total pages`;
+    let summary = `Found ${data.foundPages} pages containing "${data.query}"`;
+
+    if (data.totalUrlsFound && data.totalUrlsFound !== data.totalPages) {
+      summary += ` out of ${data.totalPages} processed (${data.totalUrlsFound} total in sitemap)`;
+    } else {
+      summary += ` out of ${data.totalPages} total pages`;
+    }
+
+    // Add warning for large sitemaps
+    if (data.totalUrlsFound > 100) {
+      summary += ' ⚠️ Large sitemap processed';
+    }
+
     this.summaryText.textContent = summary;
 
     this.resultsList.innerHTML = '';
@@ -182,6 +241,7 @@ class CrawlMapperApp {
                     <div class="result-status">No matches found</div>
                     <div style="color: var(--text-muted); margin-top: 0.5rem;">
                         No pages containing "${data.query}" were found in the sitemap.
+                        ${data.totalUrlsFound > 100 ? `<br><small>Searched through ${data.totalUrlsFound} pages.</small>` : ''}
                     </div>
                 </div>
             `;
@@ -190,6 +250,24 @@ class CrawlMapperApp {
         const resultItem = this.createResultItem(url, index + 1);
         this.resultsList.appendChild(resultItem);
       });
+    }
+
+    // Add processing info for large sitemaps
+    if (data.processingInfo && data.totalUrlsFound > 100) {
+      const processingInfo = document.createElement('div');
+      processingInfo.className = 'result-item';
+      processingInfo.style.background = 'var(--background-secondary)';
+      processingInfo.style.marginTop = '1rem';
+      processingInfo.innerHTML = `
+        <div style="font-size: 0.9em; color: var(--text-muted);">
+          <strong>Processing Info:</strong><br>
+          • Total URLs in sitemap: ${data.processingInfo.totalUrlsFound}<br>
+          • URLs processed: ${data.processingInfo.urlsProcessed}<br>
+          • Time elapsed: ${Math.round(data.processingInfo.elapsedTimeMs / 1000)}s<br>
+          ${data.processingInfo.limitNote ? `• ${data.processingInfo.limitNote}` : ''}
+        </div>
+      `;
+      this.resultsList.appendChild(processingInfo);
     }
 
     this.results.classList.remove('hidden');
@@ -266,11 +344,12 @@ class CrawlMapperApp {
 
     const metadata = [
       '# CrawlMapper Export',
-      '# Tool: CrawlMapper v2.2.0',
+      '# Tool: CrawlMapper v2.3.2',
       `# Generated: ${new Date().toISOString()}`,
       `# Sitemap: ${sitemapUrl}`,
       `# Query: "${query}"`,
       `# Total Pages: ${totalPages}`,
+      `# Total URLs in Sitemap: ${allResults.length > 0 ? allResults.length : 'Unknown'}`,
       `# Found Pages: ${foundPages}`,
       '',
     ].join('\n');
