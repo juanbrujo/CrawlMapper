@@ -1,0 +1,49 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  
+  <!-- Grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00ff41" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Matrix-style characters -->
+  <text x="100" y="150" font-family="monospace" font-size="24" fill="#00ff41" opacity="0.8">01001001 00100000 01101000 01100001 01110110 01100101 00100000 01100001 00100000 01110011 01100101 01100011 01110010 01100101 01110100</text>
+  <text x="100" y="200" font-family="monospace" font-size="20" fill="#00ff41" opacity="0.6">00100000 01100110 01101111 01110010 00100000 01111001 01101111 01110101 01110010 00100000 01110011 01100101 01100001 01110010 01100011 01101000</text>
+  <text x="100" y="250" font-family="monospace" font-size="18" fill="#00ff41" opacity="0.4">01100101 01110010 01100011 01101000 00100000 01110100 01100101 01110010 01101101 00101100 00100000 01101000 01100001 01110110 01100101 00100000 01100001 00100000 01100110 01110101 01101110</text>
+  
+  <!-- Main title -->
+  <text x="600" y="350" text-anchor="middle" font-family="monospace" font-size="72" font-weight="bold" fill="#00ff41">CRAWLMAPPER</text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="400" text-anchor="middle" font-family="monospace" font-size="24" fill="#00ff41" opacity="0.8">SITEMAP CONTENT SEARCH TOOL</text>
+  
+  <!-- Description -->
+  <text x="600" y="450" text-anchor="middle" font-family="monospace" font-size="18" fill="#00ff41" opacity="0.6">Crawl sitemaps and search for specific terms in webpage content</text>
+  
+  <!-- Terminal prompt -->
+  <text x="100" y="500" font-family="monospace" font-size="20" fill="#00ff41">$ crawlmapper --search "hack" --sitemap https://example.com/sitemap.xml</text>
+  
+  <!-- Cursor -->
+  <text x="950" y="500" font-family="monospace" font-size="20" fill="#00ff41">|</text>
+  
+  <!-- Decorative elements -->
+  <circle cx="100" cy="100" r="3" fill="#00ff41" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="1100" cy="150" r="2" fill="#00ff41" opacity="0.6">
+    <animate attributeName="opacity" values="0.6;0.1;0.6" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="200" cy="520" r="2" fill="#00ff41" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.3;0.7" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Corner brackets -->
+  <text x="50" y="80" font-family="monospace" font-size="32" fill="#00ff41" opacity="0.5">┌─</text>
+  <text x="1100" y="80" font-family="monospace" font-size="32" fill="#00ff41" opacity="0.5">─┐</text>
+  <text x="50" y="550" font-family="monospace" font-size="32" fill="#00ff41" opacity="0.5">└─</text>
+  <text x="1100" y="550" font-family="monospace" font-size="32" fill="#00ff41" opacity="0.5">─┘</text>
+</svg>
