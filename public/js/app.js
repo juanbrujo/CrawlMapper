@@ -286,11 +286,19 @@ class CrawlMapperApp {
                     </div>
                 </div>
             `;
+      // Disable export button when no matches found
+      this.exportBtn.disabled = true;
+      this.exportBtn.style.opacity = '0.5';
+      this.exportBtn.style.cursor = 'not-allowed';
     } else {
       data.matchingUrls.forEach((url, index) => {
         const resultItem = this.createResultItem(url, index + 1);
         this.resultsList.appendChild(resultItem);
       });
+      // Enable export button when matches are found
+      this.exportBtn.disabled = false;
+      this.exportBtn.style.opacity = '1';
+      this.exportBtn.style.cursor = 'pointer';
     }
 
     // Add processing info for large sitemaps
@@ -391,7 +399,7 @@ class CrawlMapperApp {
 
     const metadata = [
       '# CrawlMapper Export',
-      '# Tool: CrawlMapper v2.3.6',
+      '# Tool: CrawlMapper v2.4.0',
       `# Generated: ${new Date().toISOString()}`,
       `# Sitemap: ${sitemapUrl}`,
       `# Query: "${query}"`,

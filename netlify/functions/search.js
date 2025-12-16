@@ -14,7 +14,7 @@ async function fetchSitemap(sitemapUrl) {
     const response = await axios.get(sitemapUrl, {
       timeout: SITEMAP_TIMEOUT,
       headers: {
-        'User-Agent': 'CrawlMapper/2.3.1 (Sitemap Analyzer)',
+        'User-Agent': 'CrawlMapper/2.4.0 (Sitemap Analyzer)',
         Accept: 'application/xml, text/xml, */*;q=0.8',
       },
       maxContentLength: 5 * 1024 * 1024,
@@ -39,7 +39,7 @@ async function scrapeUrl(url, baseUrl = null) {
     const response = await axios.get(resolvedUrl, {
       timeout: URL_TIMEOUT,
       headers: {
-        'User-Agent': 'CrawlMapper/2.3.1 (Content Analyzer)',
+        'User-Agent': 'CrawlMapper/2.4.0 (Content Analyzer)',
       },
       maxContentLength: 2 * 1024 * 1024,
       maxBodyLength: 2 * 1024 * 1024,
@@ -177,8 +177,15 @@ exports.handler = async (event, context) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          error: 'Sitemap not found or could not be parsed',
+          error: `No se encontró sitemap.xml en ${sitemapUrl}. Verifica que la URL sea correcta y que el sitio tenga un sitemap disponible en /sitemap.xml`,
           success: false,
+          sitemapUrl: sitemapUrl,
+          suggestions: [
+            'Verifica que la URL del sitio sea correcta',
+            'Asegúrate de que el sitio tenga un archivo sitemap.xml',
+            'Intenta acceder manualmente a: ' + sitemapUrl,
+            'Algunos sitios usan sitemaps alternativos como /sitemap_index.xml'
+          ]
         }),
       };
     }
